@@ -18,7 +18,7 @@ const mockProducts = [
     name: 'Seamaster Diver 300M',
     brand: 'Omega',
     description: 'Co-Axial Master Chronometer 42 mm. Steel on steel. A legendary dive watch.',
-    price: 5600,,
+    price: 5600,
     category: 'Men',
     images: ['https://images.unsplash.com/photo-1548171915-e231eefc2727?auto=format&fit=crop&q=80&w=800'],
     stockCount: 12,
