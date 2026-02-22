@@ -65,3 +65,22 @@ exports.updateOrderToDelivered = async (req, res) => {
         res.status(500).json({ message: 'Server error updating order' });
     }
 };
+
+// @desc    Get order by ID
+// @route   GET /api/orders/:id
+// @access  Private
+exports.getOrderById = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id)
+            .populate('userId', 'name email')
+            .populate('products.productId', 'name image price');
+
+        if (order) {
+            res.json(order);
+        } else {
+            res.status(404).json({ message: 'Order not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server error fetching order details' });
+    }
+};

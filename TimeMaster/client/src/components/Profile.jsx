@@ -116,6 +116,14 @@ const Profile = () => {
                                                 <p className={`text-sm font-bold tracking-wider uppercase ${order.deliveryStatus === 'Delivered' ? 'text-green-500' : 'text-luxury-gold'}`}>
                                                     {order.deliveryStatus}
                                                 </p>
+                                                <p className="mt-2">
+                                                    <button
+                                                        onClick={() => navigate(`/order/${order._id}`)}
+                                                        className="text-[10px] uppercase tracking-widest border-b border-luxury-gray hover:text-white hover:border-white transition-colors text-luxury-text-gray"
+                                                    >
+                                                        View Details
+                                                    </button>
+                                                </p>
                                             </div>
                                         </div>
 

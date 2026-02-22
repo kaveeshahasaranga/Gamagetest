@@ -17,14 +17,14 @@ const ProductCard = ({ product }) => {
 
     return (
         <div className="bg-luxury-black group cursor-pointer border border-luxury-gray shadow-sm hover:shadow-xl hover:border-luxury-gold transition-all duration-300">
-            <div className="relative overflow-hidden aspect-square bg-white flex items-center justify-center p-4">
+            <div className="relative overflow-hidden aspect-square w-full bg-luxury-dark">
                 <img
                     src={product.images[0]}
                     alt={product.name}
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                 />
                 {/* Subtle overlay on hover */}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all duration-300"></div>
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
             </div>
 
             <div className="p-6 text-center">

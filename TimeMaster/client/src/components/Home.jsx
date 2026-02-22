@@ -16,7 +16,7 @@ const Home = () => {
                     Your browser does not support the video tag.
                 </video>
 
-                <div className="absolute inset-0 bg-black bg-opacity-40 z-10 flex flex-col items-center justify-center text-center px-4">
+                <div className="absolute inset-0 bg-black/40 z-10 flex flex-col items-center justify-center text-center px-4">
                     <div className="z-10 bg-black/50 p-12 lg:p-24 border border-white/10 backdrop-blur-sm mt-20">
                         <h1 className="text-5xl md:text-7xl text-white font-serif tracking-[0.2em] mb-6 animate-fade-in-up uppercase">
                             GAMAGE

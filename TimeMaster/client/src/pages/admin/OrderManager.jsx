@@ -93,13 +93,19 @@ const OrderManager = () => {
                                         </span>
                                     )}
                                 </td>
-                                <td className="px-6 py-4 text-right">
+                                <td className="px-6 py-4 text-right space-x-3">
+                                    <button
+                                        onClick={() => navigate(`/order/${order._id}`)}
+                                        className="text-[10px] border border-luxury-gray text-luxury-text-gray px-3 py-1 uppercase tracking-widest hover:bg-white hover:text-luxury-black transition-colors"
+                                    >
+                                        Details
+                                    </button>
                                     {order.deliveryStatus !== 'Delivered' && (
                                         <button
                                             onClick={() => deliverHandler(order._id)}
-                                            className="text-xs bg-luxury-gold text-white px-3 py-1 uppercase tracking-widest hover:bg-white hover:text-luxury-black transition-colors"
+                                            className="text-[10px] bg-luxury-gold text-white px-3 py-1 uppercase tracking-widest hover:bg-white hover:text-luxury-black transition-colors"
                                         >
-                                            Mark Delivered
+                                            Deliver
                                         </button>
                                     )}
                                 </td>
