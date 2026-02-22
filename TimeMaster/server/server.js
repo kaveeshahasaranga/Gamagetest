@@ -22,16 +22,21 @@ app.get('/', (req, res) => {
   res.send('TimeMaster API is running');
 });
 
-// Import Routes
+const path = require('path');
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/upload', uploadRoutes);
+
+// Make the uploads folder static so we can load images
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

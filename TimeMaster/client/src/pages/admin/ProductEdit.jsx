@@ -45,6 +45,34 @@ const ProductEdit = () => {
         }
     }, [productId, userInfo, navigate]);
 
+    const [uploading, setUploading] = useState(false);
+
+    const uploadFileHandler = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('image', file);
+        setUploading(true);
+
+        try {
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${userInfo.token}`, // Re-using admin token for security
+                },
+            };
+
+            const { data } = await axios.post('/api/upload', formData, config);
+            setImage(data);
+            setUploading(false);
+        } catch (err) {
+            console.error(err);
+            setUploading(false);
+            alert('Image upload failed: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
@@ -127,14 +155,19 @@ const ProductEdit = () => {
                 </div>
 
                 <div>
-                    <label className="block text-xs font-semibold tracking-widest text-luxury-text-gray uppercase mb-2">Image URL</label>
-                    <input
-                        type="text"
-                        value={image}
-                        onChange={(e) => setImage(e.target.value)}
-                        placeholder="https://example.com/image.jpg"
-                        className="w-full bg-luxury-dark border border-luxury-gray text-white px-4 py-3 focus:outline-none focus:border-luxury-gold transition-colors"
-                    />
+                    <label className="block text-xs font-semibold tracking-widest text-luxury-text-gray uppercase mb-2">Product Image</label>
+                    <div className="flex flex-col space-y-3">
+                        {image && (
+                            <img src={image} alt="Product Preview" className="w-32 h-32 object-cover border border-luxury-gray rounded-sm bg-black" />
+                        )}
+                        <input
+                            type="file"
+                            id="image-file"
+                            onChange={uploadFileHandler}
+                            className="bg-luxury-dark border border-luxury-gray text-white px-4 py-3 focus:outline-none focus:border-luxury-gold transition-colors w-full cursor-pointer file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-semibold file:bg-luxury-gold file:text-white file:uppercase file:tracking-widest file:cursor-pointer hover:file:bg-white hover:file:text-black"
+                        />
+                        {uploading && <span className="text-luxury-text-gray text-xs tracking-widest uppercase">Uploading image...</span>}
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
