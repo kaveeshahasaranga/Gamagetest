@@ -1,9 +1,11 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../redux/slices/cartSlice';
+import { useNavigate } from 'react-router-dom';
 
 const ProductCard = ({ product }) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleAddToCart = () => {
         dispatch(addToCart({
@@ -16,7 +18,10 @@ const ProductCard = ({ product }) => {
     };
 
     return (
-        <div className="bg-luxury-black group cursor-pointer border border-luxury-gray shadow-sm hover:shadow-xl hover:border-luxury-gold transition-all duration-300">
+        <div
+            onClick={() => navigate(`/product/${product._id}`)}
+            className="bg-luxury-black group cursor-pointer border border-luxury-gray shadow-sm hover:shadow-xl hover:border-luxury-gold transition-all duration-300"
+        >
             <div className="relative overflow-hidden aspect-square w-full bg-luxury-dark">
                 <img
                     src={product.images[0]}
@@ -33,7 +38,10 @@ const ProductCard = ({ product }) => {
                 <p className="text-luxury-gold font-medium mb-5 tracking-wider">${product.price.toLocaleString()}</p>
 
                 <button
-                    onClick={handleAddToCart}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart();
+                    }}
                     className="w-full py-3 px-4 bg-transparent border border-luxury-gray text-luxury-text-gray hover:bg-white hover:text-luxury-black hover:border-white transition-colors duration-300 uppercase tracking-widest text-xs font-semibold"
                 >
                     Add to Cart

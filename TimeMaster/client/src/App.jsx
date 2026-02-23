@@ -9,6 +9,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Profile from './components/Profile';
 import OrderDetails from './pages/OrderDetails';
+import ProductDetails from './pages/ProductDetails';
 
 import AdminRoute from './components/AdminRoute';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -39,6 +40,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/order/:id" element={<OrderDetails />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
 
           {/* Admin Routes */}
           <Route
