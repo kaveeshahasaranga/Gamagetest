@@ -29,47 +29,37 @@ const Home = () => {
 
     return (
         <div className="bg-white min-h-screen text-luxury-black font-sans">
-            {/* Hero Top Banner - Inspired by 'Performance. Value.' */}
-            <section className="relative w-full h-[400px] md:h-[500px] bg-gradient-to-r from-[#1a3b1a] to-[#2d4a22] overflow-hidden flex items-center">
-                {/* Background Texture/Pattern overlay */}
-                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/carbon-fibre.png")' }}></div>
-
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full flex flex-col md:flex-row items-center justify-between">
-                    <div className="w-full md:w-1/2 text-left mb-8 md:mb-0">
-                        <h1 className="text-4xl md:text-5xl lg:text-7xl text-white font-bold tracking-tight mb-2 uppercase leading-none">
-                            Performance. <br /> Value.
-                        </h1>
-                        <p className="text-sm md:text-base text-gray-300 tracking-widest uppercase mb-8 font-semibold">
-                            Anix Latest Sri Lanka's Youth Lifestyle Brand
-                        </p>
-
-                        <div className="flex items-center space-x-4">
-                            <Link
-                                to="/collection"
-                                className="inline-block px-8 py-3 bg-[#0d6efd] text-white font-bold text-xs rounded-sm hover:bg-blue-700 transition"
-                            >
-                                CREDIT CARD INSTALMENT PLANS ON <br /> <span className="text-[10px] font-normal tracking-wider">Discover Collection</span>
-                            </Link>
-                        </div>
-                    </div>
-
-                    <div className="w-full md:w-1/2 flex justify-center md:justify-end pr-4 lg:pr-12">
-                        <img
-                            src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&q=80&w=800"
-                            alt="Luxury Men's Watch"
-                            className="w-48 md:w-80 lg:w-96 object-cover aspect-square rounded-full drop-shadow-2xl border-4 border-[#2d4a22]"
-                        />
-                    </div>
+            {/* Cinematic Hero Section - Omega Style */}
+            <section className="relative w-full h-[600px] md:h-[80vh] flex items-center justify-center bg-gray-50 overflow-hidden">
+                <img
+                    src="https://images.unsplash.com/photo-1548171915-e79a380a2a4b?auto=format&fit=crop&q=80&w=2000"
+                    alt="Luxury Swiss Watch"
+                    className="absolute inset-0 w-full h-full object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-black/20"></div>
+                <div className="relative z-10 text-center px-4 flex flex-col items-center mt-16 md:mt-32">
+                    <h2 className="text-white text-xs md:text-sm font-bold tracking-[0.4em] uppercase mb-4 drop-shadow-md">
+                        The Master Chronometer
+                    </h2>
+                    <h1 className="text-white text-5xl md:text-7xl font-serif font-light mb-10 drop-shadow-lg">
+                        Precision. Redefined.
+                    </h1>
+                    <Link
+                        to="/collection"
+                        className="inline-block px-12 py-4 bg-white text-black font-semibold text-xs tracking-widest uppercase hover:bg-black hover:text-white transition-colors duration-300 shadow-xl"
+                    >
+                        Discover
+                    </Link>
                 </div>
             </section>
 
             {/* Featured Brands Banner */}
-            <section className="py-16 border-b border-luxury-gray bg-luxury-black">
+            <section className="py-16 border-b border-gray-200 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <p className="text-center text-xs tracking-[0.3em] text-luxury-text-gray uppercase mb-8">Authorised Retailer For</p>
-                    <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-70">
+                    <p className="text-center text-[10px] font-bold tracking-[0.3em] text-gray-400 uppercase mb-8">Authorised Retailer For</p>
+                    <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-80">
                         {['ROLEX', 'PATEK PHILIPPE', 'AUDEMARS PIGUET', 'OMEGA', 'CARTIER'].map((brand) => (
-                            <div key={brand} className="font-serif text-xl md:text-2xl tracking-[0.2em] text-white hover:text-luxury-gold transition-colors cursor-pointer">
+                            <div key={brand} className="font-serif text-xl md:text-2xl tracking-[0.2em] text-black hover:text-red-700 transition-colors cursor-pointer">
                                 {brand}
                             </div>
                         ))}
@@ -100,10 +90,11 @@ const Home = () => {
 
             {/* Men's Showcase Section */}
             <section className="py-16 bg-white border-t border-gray-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-luxury-black">
-                    <h2 className="text-3xl font-light tracking-wide uppercase mb-2">
-                        Men's <span className="text-xl text-gray-400 mx-2">|</span> <span className="text-sm font-semibold tracking-widest text-gray-500">PRECISION, QUALITY, INNOVATION</span>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-black">
+                    <h2 className="text-3xl font-serif font-light tracking-[0.1em] mb-2">
+                        Men's Collection
                     </h2>
+                    <p className="text-sm font-semibold tracking-widest text-gray-400 uppercase">Precision & Innovation</p>
 
                     {loading ? (
                         <p className="py-10">Loading Men's Collection...</p>
@@ -115,9 +106,9 @@ const Home = () => {
                         </div>
                     )}
 
-                    <div className="mt-10">
-                        <Link to="/collection?category=Men" className="inline-block px-10 py-3 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-luxury-gold transition-colors rounded-full">
-                            Men's Collection
+                    <div className="mt-12">
+                        <Link to="/collection?category=Men" className="inline-block px-12 py-4 bg-transparent border border-black text-black text-xs font-bold uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-colors duration-300">
+                            Discover Men's Watches
                         </Link>
                     </div>
                 </div>
@@ -125,10 +116,11 @@ const Home = () => {
 
             {/* Women's Showcase Section */}
             <section className="py-16 bg-white border-t border-gray-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-luxury-black">
-                    <h2 className="text-3xl font-light tracking-wide uppercase mb-2">
-                        Women's <span className="text-xl text-gray-400 mx-2">|</span> <span className="text-sm font-semibold tracking-widest text-gray-500">STYLE, STATEMENT</span>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-black">
+                    <h2 className="text-3xl font-serif font-light tracking-[0.1em] mb-2">
+                        Women's Collection
                     </h2>
+                    <p className="text-sm font-semibold tracking-widest text-gray-400 uppercase">Elegance & Statements</p>
 
                     {loading ? (
                         <p className="py-10">Loading Women's Collection...</p>
@@ -140,9 +132,9 @@ const Home = () => {
                         </div>
                     )}
 
-                    <div className="mt-10">
-                        <Link to="/collection?category=Women" className="inline-block px-10 py-3 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-luxury-gold transition-colors rounded-full">
-                            Women's Collection
+                    <div className="mt-12">
+                        <Link to="/collection?category=Women" className="inline-block px-12 py-4 bg-transparent border border-black text-black text-xs font-bold uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-colors duration-300">
+                            Discover Women's Watches
                         </Link>
                     </div>
                 </div>

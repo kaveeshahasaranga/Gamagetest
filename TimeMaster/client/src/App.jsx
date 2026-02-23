@@ -21,6 +21,8 @@ import UserManager from './pages/admin/UserManager';
 
 import ErrorBoundary from './components/ErrorBoundary';
 
+import Footer from './components/Footer';
+
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
@@ -31,38 +33,42 @@ function App() {
   return (
     <Router>
       <ErrorBoundary>
-        <div className="font-sans text-[#333333] bg-white min-h-screen">
+        <div className="font-sans text-[#333333] bg-white min-h-screen flex flex-col">
           <Navbar toggleCart={toggleCart} />
           <CartDrawer isOpen={isCartOpen} toggleCart={toggleCart} />
 
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/collection" element={<ProductList />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/order/:id" element={<OrderDetails />} />
-            <Route path="/product/:id" element={<ProductDetails />} />
+          <main className="flex-grow pt-[80px]">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/collection" element={<ProductList />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/order/:id" element={<OrderDetails />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
 
-            {/* Admin Routes */}
-            <Route
-              path="/admin"
-              element={
-                <AdminRoute>
-                  <AdminLayout />
-                </AdminRoute>
-              }
-            >
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="products" element={<ProductManager />} />
-              <Route path="product/:id/edit" element={<ProductEdit />} />
+              {/* Admin Routes */}
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminLayout />
+                  </AdminRoute>
+                }
+              >
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="products" element={<ProductManager />} />
+                <Route path="product/:id/edit" element={<ProductEdit />} />
 
-              {/* To be implemented in next step */}
-              <Route path="orders" element={<OrderManager />} />
-              <Route path="users" element={<UserManager />} />
-            </Route>
-          </Routes>
+                {/* To be implemented in next step */}
+                <Route path="orders" element={<OrderManager />} />
+                <Route path="users" element={<UserManager />} />
+              </Route>
+            </Routes>
+          </main>
+
+          <Footer />
         </div>
       </ErrorBoundary>
     </Router>
