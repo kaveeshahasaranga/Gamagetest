@@ -24,12 +24,12 @@ const orderSchema = new mongoose.Schema({
     },
     paymentMethod: {
         type: String,
-        enum: ['PayHere', 'KOKO', 'Mintpay', 'BankTransfer', 'PayCollect'],
+        enum: ['Shipping', 'Bank Card', 'KOKO'],
         required: true,
     },
     paymentStatus: {
         type: String,
-        enum: ['Pending', 'Completed', 'Failed', 'Refunded'],
+        enum: ['Pending', 'Paid', 'Failed', 'Refunded'],
         default: 'Pending',
     },
     deliveryStatus: {

@@ -14,8 +14,8 @@ const ProductManager = () => {
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.get('/api/products');
-            setProducts(data);
+            const { data } = await axios.get('/api/products?limit=all');
+            setProducts(data.products || data);
             setError(null);
         } catch (err) {
             setError(err.response?.data?.message || err.message);

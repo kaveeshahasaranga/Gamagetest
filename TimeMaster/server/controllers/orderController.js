@@ -66,6 +66,27 @@ exports.updateOrderToDelivered = async (req, res) => {
     }
 };
 
+// @desc    Update order to paid
+// @route   PUT /api/orders/:id/pay
+// @access  Private
+exports.updateOrderToPaid = async (req, res) => {
+    try {
+        const order = await Order.findById(req.params.id);
+
+        if (order) {
+            order.paymentStatus = 'Paid';
+            // In a real app we'd save the Stripe payment ID here
+
+            const updatedOrder = await order.save();
+            res.json(updatedOrder);
+        } else {
+            res.status(404).json({ message: 'Order not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server error updating payment status' });
+    }
+};
+
 // @desc    Get order by ID
 // @route   GET /api/orders/:id
 // @access  Private

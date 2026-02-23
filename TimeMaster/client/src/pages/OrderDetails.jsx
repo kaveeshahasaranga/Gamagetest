@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import PaymentForm from '../components/PaymentForm';
+
+// Initialize Stripe outside component to avoid recreating it
+const stripePromise = loadStripe('pk_test_51PLACEHOLDER_KEY_DO_NOT_USE_IN_PRODUCTION');
 
 const OrderDetails = () => {
     const { id: orderId } = useParams();
@@ -11,6 +17,7 @@ const OrderDetails = () => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [clientSecret, setClientSecret] = useState('');
 
     useEffect(() => {
         if (!userInfo) {
@@ -37,6 +44,25 @@ const OrderDetails = () => {
 
         fetchOrder();
     }, [orderId, userInfo, navigate]);
+
+    useEffect(() => {
+        if (order && order.paymentMethod === 'Bank Card' && order.paymentStatus !== 'Paid' && !clientSecret) {
+            const getClientSecret = async () => {
+                try {
+                    const config = {
+                        headers: {
+                            Authorization: `Bearer ${userInfo.token}`,
+                        },
+                    };
+                    const { data } = await axios.post('/api/payment/create-payment-intent', { orderId }, config);
+                    setClientSecret(data.clientSecret);
+                } catch (err) {
+                    console.error("Failed to get client secret", err);
+                }
+            };
+            getClientSecret();
+        }
+    }, [order, orderId, userInfo, clientSecret]);
 
     if (loading) {
         return (
@@ -87,7 +113,10 @@ const OrderDetails = () => {
                         <div className="bg-luxury-black border border-luxury-gray p-6">
                             <h2 className="text-sm tracking-widest text-luxury-text-gray uppercase mb-4">Payment Info</h2>
                             <p className="text-white mb-1"><span className="text-luxury-gold font-semibold uppercase text-xs tracking-wider">Method:</span> {order.paymentMethod}</p>
-                            <p className="text-white"><span className="text-luxury-gold font-semibold uppercase text-xs tracking-wider">Status:</span> Pending Setup</p>
+                            <p className="text-white">
+                                <span className="text-luxury-gold font-semibold uppercase text-xs tracking-wider">Status: </span>
+                                <span className={`${order.paymentStatus === 'Paid' ? 'text-green-500' : 'text-red-500'}`}>{order.paymentStatus}</span>
+                            </p>
                         </div>
 
                         <div className="bg-luxury-black border border-luxury-gray p-6">
@@ -149,6 +178,27 @@ const OrderDetails = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Payment Box */}
+                        {order.paymentMethod === 'Bank Card' && order.paymentStatus !== 'Paid' && clientSecret && (
+                            <div className="mt-8 bg-luxury-black border border-luxury-gold p-6 text-white shadow-2xl">
+                                <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'night', variables: { colorPrimary: '#d4af37' } } }}>
+                                    <PaymentForm
+                                        orderId={order._id}
+                                        amount={order.totalAmount}
+                                        onSuccess={() => window.location.reload()}
+                                    />
+                                </Elements>
+                            </div>
+                        )}
+
+                        {order.paymentStatus === 'Paid' && (
+                            <div className="mt-8 bg-green-900/10 border border-green-500/30 p-8 flex flex-col items-center justify-center text-center">
+                                <svg className="w-12 h-12 text-green-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <h3 className="text-green-400 font-bold tracking-widest text-lg uppercase mb-2">Payment Completed</h3>
+                                <p className="text-luxury-text-gray text-xs tracking-wider">Thank you for your purchase. We are preparing your luxury timepiece.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

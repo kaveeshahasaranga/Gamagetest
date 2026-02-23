@@ -28,15 +28,22 @@ const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/payment', paymentRoutes);
 app.use('/api/upload', uploadRoutes);
 
 // Make the uploads folder static so we can load images
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
+// Error Handling Middlewares
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

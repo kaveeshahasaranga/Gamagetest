@@ -61,7 +61,9 @@ exports.getProducts = async (req, res) => {
         }
 
         // Pagination Skip & Limit
-        mongooseQuery = mongooseQuery.limit(pageSize).skip(pageSize * (page - 1));
+        if (req.query.limit !== 'all') {
+            mongooseQuery = mongooseQuery.limit(pageSize).skip(pageSize * (page - 1));
+        }
 
         const products = await mongooseQuery;
         res.json({ products, page, pages: Math.ceil(count / pageSize), count });

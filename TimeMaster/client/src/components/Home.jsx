@@ -1,41 +1,65 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import ProductCard from './ProductCard';
 
 const Home = () => {
-    return (
-        <div className="bg-luxury-dark min-h-screen text-white">
-            {/* Hero Section */}
-            <section className="relative w-full h-screen overflow-hidden">
-                <video
-                    autoPlay
-                    loop
-                    muted
-                    className="absolute top-0 left-0 w-full h-full object-cover z-0"
-                >
-                    <source src="https://videos.pexels.com/video-files/855029/855029-hd_1920_1080_30fps.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-                <div className="absolute inset-0 bg-black/40 z-10 flex flex-col items-center justify-center text-center px-4">
-                    <div className="z-10 bg-black/50 p-12 lg:p-24 border border-white/10 backdrop-blur-sm mt-20">
-                        <h1 className="text-5xl md:text-7xl text-white font-serif tracking-[0.2em] mb-6 animate-fade-in-up uppercase">
-                            GAMAGE
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                // Fetch latest products to use across Trending, Men's, and Women's
+                const { data } = await axios.get('/api/products?limit=all');
+                setProducts(data.products || data);
+            } catch (error) {
+                console.error("Failed to fetch products for homepage", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProducts();
+    }, []);
+
+    // Helper functions to filter products
+    const trendingProducts = products.slice(0, 6); // First 6 for trending
+    const menProducts = products.filter(p => p.category === 'Men').slice(0, 8);
+    const womenProducts = products.filter(p => p.category === 'Women').slice(0, 8);
+
+    return (
+        <div className="bg-white min-h-screen text-luxury-black font-sans">
+            {/* Hero Top Banner - Inspired by 'Performance. Value.' */}
+            <section className="relative w-full h-[400px] md:h-[500px] bg-gradient-to-r from-[#1a3b1a] to-[#2d4a22] overflow-hidden flex items-center">
+                {/* Background Texture/Pattern overlay */}
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/carbon-fibre.png")' }}></div>
+
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full flex flex-col md:flex-row items-center justify-between">
+                    <div className="w-full md:w-1/2 text-left mb-8 md:mb-0">
+                        <h1 className="text-4xl md:text-5xl lg:text-7xl text-white font-bold tracking-tight mb-2 uppercase leading-none">
+                            Performance. <br /> Value.
                         </h1>
-                        <p className="text-lg md:text-xl text-luxury-text-gray mb-10 max-w-2xl font-light tracking-[0.1em] mx-auto">
-                            Elevate your style with our premium collection of luxury timepieces.
+                        <p className="text-sm md:text-base text-gray-300 tracking-widest uppercase mb-8 font-semibold">
+                            Anix Latest Sri Lanka's Youth Lifestyle Brand
                         </p>
 
-                        <Link
-                            to="/collection"
-                            className="inline-block px-10 py-4 bg-transparent border border-white text-white font-semibold uppercase tracking-[0.2em] hover:bg-white hover:text-luxury-black transition duration-300 ease-in-out text-sm"
-                        >
-                            Discover Collection
-                        </Link>
+                        <div className="flex items-center space-x-4">
+                            <Link
+                                to="/collection"
+                                className="inline-block px-8 py-3 bg-[#0d6efd] text-white font-bold text-xs rounded-sm hover:bg-blue-700 transition"
+                            >
+                                CREDIT CARD INSTALMENT PLANS ON <br /> <span className="text-[10px] font-normal tracking-wider">Discover Collection</span>
+                            </Link>
+                        </div>
                     </div>
-                </div>
 
-                <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 animate-bounce">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                    <div className="w-full md:w-1/2 flex justify-center md:justify-end pr-4 lg:pr-12">
+                        <img
+                            src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&q=80&w=800"
+                            alt="Luxury Men's Watch"
+                            className="w-48 md:w-80 lg:w-96 object-cover aspect-square rounded-full drop-shadow-2xl border-4 border-[#2d4a22]"
+                        />
+                    </div>
                 </div>
             </section>
 
@@ -53,74 +77,86 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Featured Collection Teaser */}
-            <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-serif tracking-widest uppercase mb-4">Timeless Elegance</h2>
-                    <div className="h-px w-24 bg-luxury-gold mx-auto mb-6"></div>
-                    <p className="text-luxury-text-gray tracking-wide max-w-2xl mx-auto">Curated selections that define prestige and exceptional craftsmanship.</p>
+            {/* Trending Now Section */}
+            <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-white text-luxury-black">
+                <div className="flex items-center justify-between mb-8">
+                    <button className="p-2 border border-gray-300 rounded-full hover:bg-gray-100">&larr;</button>
+                    <h2 className="text-3xl font-light tracking-wide uppercase">Trending Now</h2>
+                    <button className="p-2 border border-gray-300 rounded-full hover:bg-gray-100">&rarr;</button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {/* Category 1 */}
-                    <Link to="/collection" className="group relative h-[500px] overflow-hidden bg-luxury-black border border-luxury-gray">
-                        <img
-                            src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&q=80&w=2000"
-                            alt="Men's Watches"
-                            className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700 ease-in-out"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-10">
-                            <h3 className="text-2xl font-serif tracking-widest uppercase mb-2">Men's Collection</h3>
-                            <p className="text-luxury-gold tracking-widest text-sm uppercase font-semibold flex items-center">
-                                Explore <svg className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                            </p>
-                        </div>
-                    </Link>
-
-                    {/* Category 2 */}
-                    <Link to="/collection" className="group relative h-[500px] overflow-hidden bg-luxury-black border border-luxury-gray">
-                        <img
-                            src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&q=80&w=2000"
-                            alt="Women's Watches"
-                            className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700 ease-in-out"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-10">
-                            <h3 className="text-2xl font-serif tracking-widest uppercase mb-2">Women's Collection</h3>
-                            <p className="text-luxury-gold tracking-widest text-sm uppercase font-semibold flex items-center">
-                                Explore <svg className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                            </p>
-                        </div>
-                    </Link>
+                <div className="flex overflow-x-auto space-x-6 pb-4 scrollbar-hide">
+                    {loading ? (
+                        <p className="text-center w-full">Loading trending...</p>
+                    ) : (
+                        trendingProducts.map((product) => (
+                            <div key={product._id} className="min-w-[200px] md:min-w-[250px] flex-shrink-0">
+                                <ProductCard product={product} />
+                            </div>
+                        ))
+                    )}
                 </div>
             </section>
 
-            {/* Our Story / Boutique Section */}
-            <section className="py-24 border-t border-luxury-gray bg-luxury-black">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                        <div className="relative h-[600px] border border-luxury-gray">
-                            <img
-                                src="https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?auto=format&fit=crop&q=80&w=2000"
-                                alt="Watchmaking Craftsmanship"
-                                className="w-full h-full object-cover opacity-80"
-                            />
+            {/* Men's Showcase Section */}
+            <section className="py-16 bg-white border-t border-gray-200">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-luxury-black">
+                    <h2 className="text-3xl font-light tracking-wide uppercase mb-2">
+                        Men's <span className="text-xl text-gray-400 mx-2">|</span> <span className="text-sm font-semibold tracking-widest text-gray-500">PRECISION, QUALITY, INNOVATION</span>
+                    </h2>
+
+                    {loading ? (
+                        <p className="py-10">Loading Men's Collection...</p>
+                    ) : (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mt-10">
+                            {menProducts.map((product) => (
+                                <ProductCard key={product._id} product={product} />
+                            ))}
                         </div>
-                        <div className="lg:pl-8">
-                            <h2 className="text-3xl md:text-5xl font-serif tracking-widest uppercase mb-6">The GAMAGE Legacy</h2>
-                            <div className="h-px w-24 bg-luxury-gold mb-8"></div>
-                            <p className="text-luxury-text-gray leading-relaxed tracking-wide mb-6">
-                                For over generations, GAMAGE has been the definitive destination for connoisseurs of fine horology. We believe that a watch is more than a timepiece; it is a legacy passed down through generations, an intimate expression of personal style, and a triumph of mechanical engineering.
-                            </p>
-                            <p className="text-luxury-text-gray leading-relaxed tracking-wide mb-10">
-                                Step into our boutique and discover a world of prestige. From the iconic designs of Geneva to the avant-garde innovations of modern horology, our curated selection represents the pinnacle of watchmaking craftsmanship.
-                            </p>
-                            <Link
-                                to="/about"
-                                className="inline-block px-8 py-4 border border-luxury-gray text-white font-semibold uppercase tracking-[0.2em] hover:bg-white hover:text-luxury-black transition duration-300 ease-in-out text-sm"
-                            >
-                                Read Our Story
-                            </Link>
+                    )}
+
+                    <div className="mt-10">
+                        <Link to="/collection?category=Men" className="inline-block px-10 py-3 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-luxury-gold transition-colors rounded-full">
+                            Men's Collection
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* Women's Showcase Section */}
+            <section className="py-16 bg-white border-t border-gray-100">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-luxury-black">
+                    <h2 className="text-3xl font-light tracking-wide uppercase mb-2">
+                        Women's <span className="text-xl text-gray-400 mx-2">|</span> <span className="text-sm font-semibold tracking-widest text-gray-500">STYLE, STATEMENT</span>
+                    </h2>
+
+                    {loading ? (
+                        <p className="py-10">Loading Women's Collection...</p>
+                    ) : (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mt-10">
+                            {womenProducts.map((product) => (
+                                <ProductCard key={product._id} product={product} />
+                            ))}
                         </div>
+                    )}
+
+                    <div className="mt-10">
+                        <Link to="/collection?category=Women" className="inline-block px-10 py-3 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-luxury-gold transition-colors rounded-full">
+                            Women's Collection
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* Static Review Bar */}
+            <section className="py-12 bg-white border-t border-b border-gray-200 text-center">
+                <div className="max-w-4xl mx-auto px-4">
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                        <p className="text-sm font-bold uppercase tracking-widest text-luxury-black">Excellent</p>
+                        <div className="flex text-yellow-500 text-2xl">
+                            ★★★★★
+                        </div>
+                        <p className="text-xs text-gray-500 uppercase tracking-widest">Based on latest reviews • <span className="font-bold text-blue-500">Google</span></p>
                     </div>
                 </div>
             </section>
