@@ -1,19 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import SidebarFilter from './SidebarFilter';
+import Pagination from './Pagination';
 import useProducts from '../hooks/useProducts';
 
 const ProductList = () => {
+    const [searchParams] = useSearchParams();
+    const initialBrand = searchParams.get('brand');
+
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [searchInput, setSearchInput] = useState('');
+
     const [filters, setFilters] = useState({
-        brands: [],
+        brands: initialBrand ? [initialBrand] : [],
         categories: [],
         minPrice: '',
         maxPrice: '',
-        sort: 'newest'
+        sort: 'newest',
+        keyword: '',
+        pageNumber: 1
     });
 
-    const { products, loading, error } = useProducts(filters);
+    // Sync with URL changes (e.g., clicking Mega Menu while already on Collection page)
+    useEffect(() => {
+        const brand = searchParams.get('brand');
+        setFilters(prev => ({
+            ...prev,
+            brands: brand ? [brand] : [],
+            pageNumber: 1 // Reset pagination on brand change
+        }));
+    }, [searchParams]);
+
+    const { products, page, pages, count, loading, error } = useProducts(filters);
+
+    const handleSearchForm = (e) => {
+        e.preventDefault();
+        setFilters(prev => ({ ...prev, keyword: searchInput, pageNumber: 1 }));
+    };
+
+    const handlePageChange = (newPage) => {
+        setFilters(prev => ({ ...prev, pageNumber: newPage }));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+
 
     return (
         <div className="min-h-screen bg-luxury-dark pt-32 pb-16 px-4 md:px-8 lg:px-16">
@@ -49,9 +80,29 @@ const ProductList = () => {
 
                     {/* Main Content Area */}
                     <div className="flex-1">
+
+                        {/* Search Bar */}
+                        <form onSubmit={handleSearchForm} className="mb-8 flex">
+                            <input
+                                type="text"
+                                placeholder="Search by model or collection..."
+                                className="flex-1 bg-luxury-black border border-luxury-gray text-white px-4 py-4 focus:outline-none focus:border-luxury-gold transition-colors tracking-wide placeholder-luxury-text-gray"
+                                value={searchInput}
+                                onChange={(e) => setSearchInput(e.target.value)}
+                            />
+                            <button
+                                type="submit"
+                                className="bg-luxury-gold text-white px-8 font-medium uppercase tracking-widest text-sm hover:bg-white hover:text-luxury-black transition-colors"
+                            >
+                                Search
+                            </button>
+                        </form>
+
                         {/* Sort Dropdown (Desktop) */}
                         <div className="hidden lg:flex justify-between items-center mb-8 pb-4 border-b border-luxury-gray">
-                            <p className="text-luxury-text-gray text-sm tracking-widest uppercase">{products.length} Results</p>
+                            <p className="text-luxury-text-gray text-sm tracking-widest uppercase">
+                                {count} {count === 1 ? 'Result' : 'Results'}
+                            </p>
                             <div className="flex items-center space-x-4">
                                 <label className="text-xs text-luxury-text-gray tracking-widest uppercase">Sort By</label>
                                 <select
@@ -99,11 +150,14 @@ const ProductList = () => {
                                 </button>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8">
-                                {products.map((product) => (
-                                    <ProductCard key={product._id} product={product} />
-                                ))}
-                            </div>
+                            <>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8">
+                                    {products.map((product) => (
+                                        <ProductCard key={product._id} product={product} />
+                                    ))}
+                                </div>
+                                <Pagination page={page} pages={pages} onPageChange={handlePageChange} />
+                            </>
                         )}
                     </div>
                 </div>

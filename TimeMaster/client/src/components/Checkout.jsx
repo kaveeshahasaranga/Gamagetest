@@ -11,6 +11,8 @@ const Checkout = () => {
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
 
+    const [paymentMethod, setPaymentMethod] = useState('Shipping');
+
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
 
@@ -36,14 +38,14 @@ const Checkout = () => {
                     quantity: item.quantity,
                 })),
                 totalAmount,
-                paymentMethod: 'PayHere' // Hardcoded for this simulated flow
+                paymentMethod: paymentMethod // Dynamic based on user selection
             };
 
             await axios.post('/api/orders', orderData, config);
 
             setIsProcessing(false);
             dispatch(clearCart());
-            alert('Order Placed Successfully! Thank you for shopping with GAMAGE.');
+            alert(`Order Placed Successfully via ${paymentMethod}!`);
             navigate('/profile');
         } catch (error) {
             setIsProcessing(false);
@@ -99,22 +101,56 @@ const Checkout = () => {
                                 </div>
                             </div>
 
-                            <h2 className="text-xl font-serif text-white uppercase tracking-widest mb-6 border-b border-luxury-gray pb-4">Payment Details</h2>
-                            <div className="space-y-6 mb-10">
-                                <div>
-                                    <label className="block text-xs font-semibold tracking-widest text-luxury-text-gray uppercase mb-2">Card Number</label>
-                                    <input required type="text" placeholder="0000 0000 0000 0000" className="w-full px-4 py-3 bg-luxury-dark text-white border border-luxury-gray placeholder-luxury-gray focus:outline-none focus:ring-1 focus:ring-luxury-gold focus:border-luxury-gold transition-colors tracking-widest placeholder:tracking-widest" />
-                                </div>
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="block text-xs font-semibold tracking-widest text-luxury-text-gray uppercase mb-2">Expiry Date</label>
-                                        <input required type="text" placeholder="MM/YY" className="w-full px-4 py-3 bg-luxury-dark text-white border border-luxury-gray placeholder-luxury-gray focus:outline-none focus:ring-1 focus:ring-luxury-gold focus:border-luxury-gold transition-colors uppercase tracking-widest placeholder:tracking-widest" />
+                            <h2 className="text-xl font-serif text-white uppercase tracking-widest mb-6 border-b border-luxury-gray pb-4">Payment Options</h2>
+
+                            {/* Payment Method Selector */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                                <label className={`cursor-pointer border p-4 text-center transition-all ${paymentMethod === 'Shipping' ? 'border-luxury-gold bg-luxury-dark' : 'border-luxury-gray hover:border-white'}`}>
+                                    <input type="radio" name="paymentMethod" value="Shipping" checked={paymentMethod === 'Shipping'} onChange={(e) => setPaymentMethod(e.target.value)} className="hidden" />
+                                    <span className={`block text-xs tracking-widest uppercase font-semibold ${paymentMethod === 'Shipping' ? 'text-luxury-gold' : 'text-white'}`}>Shipping</span>
+                                    <span className="block text-[10px] text-luxury-text-gray mt-1">Cash / Card on Delivery</span>
+                                </label>
+                                <label className={`cursor-pointer border p-4 text-center transition-all ${paymentMethod === 'Bank Card' ? 'border-luxury-gold bg-luxury-dark' : 'border-luxury-gray hover:border-white'}`}>
+                                    <input type="radio" name="paymentMethod" value="Bank Card" checked={paymentMethod === 'Bank Card'} onChange={(e) => setPaymentMethod(e.target.value)} className="hidden" />
+                                    <span className={`block text-xs tracking-widest uppercase font-semibold ${paymentMethod === 'Bank Card' ? 'text-luxury-gold' : 'text-white'}`}>Bank Card</span>
+                                    <span className="block text-[10px] text-luxury-text-gray mt-1">Direct Secure Payment</span>
+                                </label>
+                                <label className={`cursor-pointer border p-4 text-center transition-all ${paymentMethod === 'KOKO' ? 'border-[#FF3A5C] bg-[#FF3A5C]/10' : 'border-luxury-gray hover:border-[#FF3A5C]'}`}>
+                                    <input type="radio" name="paymentMethod" value="KOKO" checked={paymentMethod === 'KOKO'} onChange={(e) => setPaymentMethod(e.target.value)} className="hidden" />
+                                    <span className={`block text-xs tracking-widest uppercase font-bold ${paymentMethod === 'KOKO' ? 'text-[#FF3A5C]' : 'text-white'}`}>KOKO</span>
+                                    <span className="block text-[10px] text-luxury-text-gray mt-1">Buy Now, Pay Later</span>
+                                </label>
+                            </div>
+
+                            {/* Dynamic Payment Details UI */}
+                            <div className="mb-10 min-h-[140px]">
+                                {paymentMethod === 'Shipping' && (
+                                    <div className="bg-luxury-dark border border-luxury-gray p-6 text-center">
+                                        <svg className="mx-auto h-8 w-8 text-luxury-text-gray mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                                        <p className="text-white text-sm tracking-widest uppercase">Pay upon receipt</p>
+                                        <p className="text-luxury-text-gray text-xs mt-2">You can pay with cash or card directly to the courier when your timepiece arrives.</p>
                                     </div>
-                                    <div>
-                                        <label className="block text-xs font-semibold tracking-widest text-luxury-text-gray uppercase mb-2">CVC</label>
-                                        <input required type="text" placeholder="123" className="w-full px-4 py-3 bg-luxury-dark text-white border border-luxury-gray placeholder-luxury-gray focus:outline-none focus:ring-1 focus:ring-luxury-gold focus:border-luxury-gold transition-colors tracking-widest placeholder:tracking-widest" />
+                                )}
+
+                                {paymentMethod === 'Bank Card' && (
+                                    <div className="space-y-4 animate-fadeIn">
+                                        <div>
+                                            <input required type="text" placeholder="Card Number (e.g. 4000 0000 0000 0000)" className="w-full px-4 py-3 bg-luxury-dark text-white border border-luxury-gray placeholder-luxury-gray focus:outline-none focus:ring-1 focus:ring-luxury-gold focus:border-luxury-gold transition-colors tracking-widest text-sm" />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <input required type="text" placeholder="MM/YY" className="w-full px-4 py-3 bg-luxury-dark text-white border border-luxury-gray placeholder-luxury-gray focus:outline-none focus:ring-1 focus:ring-luxury-gold focus:border-luxury-gold transition-colors tracking-widest text-sm" />
+                                            <input required type="text" placeholder="CVC" className="w-full px-4 py-3 bg-luxury-dark text-white border border-luxury-gray placeholder-luxury-gray focus:outline-none focus:ring-1 focus:ring-luxury-gold focus:border-luxury-gold transition-colors tracking-widest text-sm" />
+                                        </div>
                                     </div>
-                                </div>
+                                )}
+
+                                {paymentMethod === 'KOKO' && (
+                                    <div className="bg-[#FF3A5C]/10 border border-[#FF3A5C]/30 p-6 flex flex-col items-center justify-center text-center">
+                                        <h3 className="text-[#FF3A5C] font-bold tracking-widest text-xl mb-2">KOKO</h3>
+                                        <p className="text-white text-sm mb-1 tracking-wider">3 Interest-Free Installments</p>
+                                        <p className="text-luxury-text-gray text-xs">You will be redirected to the KOKO portal to complete your secure payment setup after placing the order.</p>
+                                    </div>
+                                )}
                             </div>
 
                             <button
@@ -131,7 +167,7 @@ const Checkout = () => {
                                         <span>Processing Secure Payment...</span>
                                     </span>
                                 ) : (
-                                    `Place Order • $${totalAmount.toLocaleString()}`
+                                    paymentMethod === 'KOKO' ? `Continue to KOKO • $${totalAmount.toLocaleString()}` : `Place Order • $${totalAmount.toLocaleString()}`
                                 )}
                             </button>
                         </form>

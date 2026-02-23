@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { addToCart } from '../redux/slices/cartSlice';
 
@@ -9,10 +9,57 @@ const ProductDetails = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    const { userInfo } = useSelector((state) => state.auth);
+
     const [product, setProduct] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [qty, setQty] = useState(1);
+
+    // Review State
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState('');
+    const [reviewError, setReviewError] = useState(null);
+    const [reviewSuccess, setReviewSuccess] = useState(false);
+
+    const fetchProduct = async () => {
+        try {
+            const { data } = await axios.get(`/api/products/${id}`);
+            setProduct(data);
+            setError(null);
+        } catch (err) {
+            setError(err.response?.data?.message || err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchProduct();
+    }, [id]);
+
+
+
+    const submitReviewHandler = async (e) => {
+        e.preventDefault();
+        setReviewError(null);
+        setReviewSuccess(false);
+        try {
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
+            };
+            await axios.post(`/api/products/${id}/reviews`, { rating, comment }, config);
+            setReviewSuccess(true);
+            setRating(0);
+            setComment('');
+            fetchProduct(); // Refresh product to show new review
+        } catch (error) {
+            setReviewError(error.response?.data?.message || 'Error submitting review');
+        }
+    };
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -91,7 +138,22 @@ const ProductDetails = () => {
                     {/* Right Column: Product Info */}
                     <div className="flex flex-col justify-center h-full py-4 lg:py-10">
                         <p className="text-luxury-text-gray tracking-widest uppercase text-sm font-semibold mb-3">{product.brand}</p>
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white leading-tight mb-6">{product.name}</h1>
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-white leading-tight mb-4">{product.name}</h1>
+
+                        {/* Rating Display */}
+                        <div className="flex items-center mb-6">
+                            <div className="flex text-luxury-gold mr-3">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <svg key={star} className={`w-5 h-5 ${product.rating >= star ? 'fill-current' : 'text-luxury-gray fill-transparent stroke-current'}`} viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                    </svg>
+                                ))}
+                            </div>
+                            <span className="text-luxury-text-gray text-xs tracking-widest uppercase">
+                                {product.numReviews} {product.numReviews === 1 ? 'Review' : 'Reviews'}
+                            </span>
+                        </div>
+
                         <p className="text-2xl font-serif text-luxury-gold tracking-wider mb-8">${product.price?.toLocaleString()}</p>
 
                         <div className="h-px w-full bg-luxury-gray mb-8"></div>
@@ -149,6 +211,90 @@ const ProductDetails = () => {
                                 <span className="text-white uppercase tracking-wider text-xs">5-Year International</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                {/* Customer Reviews Section */}
+                <div className="mt-24 max-w-4xl mx-auto border-t border-luxury-gray pt-16">
+                    <h2 className="text-3xl font-serif text-white uppercase tracking-widest text-center mb-12">Customer Reviews</h2>
+
+                    <div className="space-y-8 mb-16">
+                        {product.reviews && product.reviews.length === 0 && (
+                            <div className="bg-luxury-black border border-luxury-gray p-8 text-center">
+                                <p className="text-luxury-text-gray tracking-wider uppercase text-sm">No reviews yet. Be the first to review this timepiece.</p>
+                            </div>
+                        )}
+                        {product.reviews && product.reviews.map((review) => (
+                            <div key={review._id} className="bg-luxury-black border border-luxury-gray p-6 sm:p-8">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div>
+                                        <p className="text-white font-semibold tracking-wider uppercase text-sm">{review.name}</p>
+                                        <p className="text-luxury-text-gray text-xs tracking-widest mt-1">{review.createdAt.substring(0, 10)}</p>
+                                    </div>
+                                    <div className="flex text-luxury-gold">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <svg key={star} className={`w-4 h-4 ${review.rating >= star ? 'fill-current' : 'text-luxury-gray fill-transparent stroke-current'}`} viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                            </svg>
+                                        ))}
+                                    </div>
+                                </div>
+                                <p className="text-luxury-text-gray leading-relaxed text-sm">{review.comment}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Write a Review Form */}
+                    <div className="bg-luxury-black/50 border border-luxury-gray p-6 sm:p-10">
+                        <h3 className="text-xl font-serif text-white uppercase tracking-widest mb-6 border-b border-luxury-gray pb-4">Write a Review</h3>
+
+                        {reviewError && <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 mb-6 tracking-widest text-xs uppercase text-center">{reviewError}</div>}
+                        {reviewSuccess && <div className="bg-luxury-gold/10 border border-luxury-gold text-luxury-gold p-4 mb-6 tracking-widest text-xs uppercase text-center">Review Submitted Successfully</div>}
+
+                        {userInfo ? (
+                            <form onSubmit={submitReviewHandler} className="space-y-6">
+                                <div>
+                                    <label className="block text-xs font-semibold tracking-widest text-luxury-text-gray uppercase mb-3">Rating</label>
+                                    <select
+                                        value={rating}
+                                        onChange={(e) => setRating(e.target.value)}
+                                        className="w-full px-4 py-3 bg-luxury-dark text-white border border-luxury-gray focus:outline-none focus:ring-1 focus:ring-luxury-gold focus:border-luxury-gold transition-colors appearance-none cursor-pointer"
+                                        required
+                                    >
+                                        <option value="">Select...</option>
+                                        <option value="1">1 - Poor</option>
+                                        <option value="2">2 - Fair</option>
+                                        <option value="3">3 - Good</option>
+                                        <option value="4">4 - Very Good</option>
+                                        <option value="5">5 - Excellent</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-semibold tracking-widest text-luxury-text-gray uppercase mb-3">Comment</label>
+                                    <textarea
+                                        rows="4"
+                                        value={comment}
+                                        onChange={(e) => setComment(e.target.value)}
+                                        className="w-full px-4 py-3 bg-luxury-dark text-white border border-luxury-gray focus:outline-none focus:ring-1 focus:ring-luxury-gold focus:border-luxury-gold transition-colors resize-none placeholder-luxury-gray"
+                                        placeholder="Share your thoughts on this timepiece..."
+                                        required
+                                    ></textarea>
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="px-8 py-4 bg-white text-luxury-black tracking-widest uppercase font-semibold text-sm hover:bg-luxury-gold hover:text-white transition-colors duration-300 w-full sm:w-auto"
+                                >
+                                    Submit Feedback
+                                </button>
+                            </form>
+                        ) : (
+                            <div className="text-center py-6">
+                                <p className="text-luxury-text-gray tracking-wider mb-4">You must be signed in to share your experience.</p>
+                                <button onClick={() => navigate('/login')} className="px-6 py-3 border border-luxury-gray text-white hover:border-white transition-colors tracking-widest uppercase text-xs">
+                                    Sign In to Review
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

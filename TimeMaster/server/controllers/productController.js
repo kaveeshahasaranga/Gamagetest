@@ -5,8 +5,19 @@ const Product = require('../models/Product');
 // @access  Public
 exports.getProducts = async (req, res) => {
     try {
-        const { brand, category, minPrice, maxPrice, sort } = req.query;
+        const pageSize = 12;
+        const page = Number(req.query.pageNumber) || 1;
+
+        const { keyword, brand, category, minPrice, maxPrice, sort } = req.query;
         let query = {};
+
+        // Search by Keyword
+        if (keyword) {
+            query.name = {
+                $regex: keyword,
+                $options: 'i',
+            };
+        }
 
         // Filter by Brand
         if (brand) {
@@ -27,6 +38,7 @@ exports.getProducts = async (req, res) => {
             if (maxPrice) query.price.$lte = Number(maxPrice);
         }
 
+        const count = await Product.countDocuments(query);
         let mongooseQuery = Product.find(query);
 
         // Sorting
@@ -48,8 +60,11 @@ exports.getProducts = async (req, res) => {
             mongooseQuery = mongooseQuery.sort({ createdAt: -1 }); // Default sort
         }
 
+        // Pagination Skip & Limit
+        mongooseQuery = mongooseQuery.limit(pageSize).skip(pageSize * (page - 1));
+
         const products = await mongooseQuery;
-        res.json(products);
+        res.json({ products, page, pages: Math.ceil(count / pageSize), count });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server Error fetching products' });
@@ -139,5 +154,49 @@ exports.deleteProduct = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ message: 'Server error deleting product' });
+    }
+};
+
+// @desc    Create new review
+// @route   POST /api/products/:id/reviews
+// @access  Private
+exports.createProductReview = async (req, res) => {
+    try {
+        const { rating, comment } = req.body;
+
+        const product = await Product.findById(req.params.id);
+
+        if (product) {
+            const alreadyReviewed = product.reviews.find(
+                (r) => r.user.toString() === req.user._id.toString()
+            );
+
+            if (alreadyReviewed) {
+                res.status(400).json({ message: 'Product already reviewed' });
+                return;
+            }
+
+            const review = {
+                name: req.user.name,
+                rating: Number(rating),
+                comment,
+                user: req.user._id,
+            };
+
+            product.reviews.push(review);
+
+            product.numReviews = product.reviews.length;
+
+            product.rating =
+                product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+                product.reviews.length;
+
+            await product.save();
+            res.status(201).json({ message: 'Review added' });
+        } else {
+            res.status(404).json({ message: 'Product not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server error creating review' });
     }
 };
