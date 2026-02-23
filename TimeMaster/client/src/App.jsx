@@ -31,7 +31,7 @@ function App() {
   return (
     <Router>
       <ErrorBoundary>
-        <div className="font-sans text-gray-300 bg-[#0f0f0f] min-h-screen">
+        <div className="font-sans text-[#333333] bg-white min-h-screen">
           <Navbar toggleCart={toggleCart} />
           <CartDrawer isOpen={isCartOpen} toggleCart={toggleCart} />
 
