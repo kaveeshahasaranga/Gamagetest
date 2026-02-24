@@ -10,6 +10,8 @@ import Register from './components/Register';
 import Profile from './components/Profile';
 import OrderDetails from './pages/OrderDetails';
 import ProductDetails from './pages/ProductDetails';
+import About from './pages/About';
+import Contact from './pages/Contact';
 
 import AdminRoute from './components/AdminRoute';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -45,6 +47,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/order/:id" element={<OrderDetails />} />
               <Route path="/product/:id" element={<ProductDetails />} />
 

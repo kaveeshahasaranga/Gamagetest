@@ -83,8 +83,8 @@ const Navbar = ({ toggleCart }) => {
                         </div>
                     </div>
 
-                    <a href="#" className="hover:text-black transition-colors h-full flex items-center">About</a>
-                    <a href="#" className="hover:text-black transition-colors h-full flex items-center">Contact</a>
+                    <Link to="/about" className="hover:text-black transition-colors h-full flex items-center">About</Link>
+                    <Link to="/contact" className="hover:text-black transition-colors h-full flex items-center">Contact</Link>
                 </div>
 
                 {/* Center: Brand Logo */}

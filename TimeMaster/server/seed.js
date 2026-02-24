@@ -20,7 +20,7 @@ const mockProducts = [
     description: 'Co-Axial Master Chronometer 42 mm. Steel on steel. A legendary dive watch.',
     price: 5600,
     category: 'Men',
-    images: ['https://images.unsplash.com/photo-1548171915-e231eefc2727?auto=format&fit=crop&q=80&w=800'],
+    images: ['https://images.unsplash.com/photo-1622434641406-a158123450f9?auto=format&fit=crop&q=80&w=800'], // Updated to a clear watch image
     stockCount: 12,
   },
   {
@@ -29,7 +29,7 @@ const mockProducts = [
     description: 'A classic sports watch reborn in luxury. Stainless steel with a blue dial.',
     price: 125000,
     category: 'Men',
-    images: ['https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?auto=format&fit=crop&q=80&w=800'],
+    images: ['https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80&w=800'], // Updated to a clear watch image
     stockCount: 2,
   },
   {
@@ -47,7 +47,7 @@ const mockProducts = [
     description: 'Iconic octagonal bezel with "Grande Tapisserie" dial. Steel case, luxury finished.',
     price: 35000,
     category: 'Unisex',
-    images: ['https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&q=80&w=800'],
+    images: ['https://images.unsplash.com/photo-1614164185128-e4ec85c94f54?auto=format&fit=crop&q=80&w=800'], // Updated to a clear watch image
     stockCount: 3,
   },
   {
@@ -56,7 +56,7 @@ const mockProducts = [
     description: 'The iconic chronograph that went to the moon. Professional Master Chronometer.',
     price: 7000,
     category: 'Men',
-    images: ['https://images.unsplash.com/photo-1517467139951-f5a925c9f9de?auto=format&fit=crop&q=80&w=800'],
+    images: ['https://images.unsplash.com/photo-1623998021450-85c29c644e0d?auto=format&fit=crop&q=80&w=800'], // Updated to a clear watch image
     stockCount: 15,
   }
 ];
